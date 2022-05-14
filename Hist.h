@@ -24,7 +24,7 @@ void HistDestroy(Hist hist);
 unsigned int HistSize(Hist hist);
 
 // Get the count of element e. If e is not in hist, returns 0.
-int HistGetCount(Hist hist, Element *e);
+int HistGetCount(Hist hist, Element e);
 
 // Increment the count of e by one.
 // If e is not in hist, create a new entry with a clone of e and a count of 1.
