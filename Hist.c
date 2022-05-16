@@ -2,8 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "LinkedList.h"
-#include "string.h"
-// #include "LinkedList.c"
+
 
 #include "Set.h"
 static Element clone_int(Element int_elem) {
@@ -25,7 +24,6 @@ static Element clone_int(Element int_elem) {
 
 
 struct Hist{
-//    int count; ///Was  int * count; //useless
     void (*free_func)(Element);
     Element (*clone_func)(Element);
     LinkedList listElement;
@@ -68,8 +66,8 @@ Hist HistCreate(Element (*clone_func)(Element),void (*free_func)(Element),
 
 void HistDestroy(Hist hist)
 {
-    free(hist->listElement);
-    free(hist->listCount);
+    LLDestroy(hist->listElement);
+    LLDestroy(hist->listCount);
     free(hist);
 }
 
