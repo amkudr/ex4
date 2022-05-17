@@ -97,7 +97,6 @@ int HistGetCount(Hist hist, Element e)// לבדוק עם מישהו אם זה ע
 
             return *cloneCnt;
         }
-        //   printf("check3");
     }
     return 0;
 }
@@ -129,7 +128,7 @@ void HistInc(Hist hist, Element e) {
                 int count  =  HistGetCount(hist, e)+1;
                 Element* e5=NULL;
                 e5=LLRemove(hist->listCount,i);
-                printf("e5>>%d\n",*(int*)e5);
+//                printf("e5>>%d\n",*(int*)e5);
 //                *e5 = count;
                 //    printf("e5>>%d\n",*(int*)e5);
                 LLAdd(hist->listCount, i,  &count); //// Change e5 to count

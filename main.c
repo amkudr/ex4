@@ -6,16 +6,77 @@
 
 
 static bool cmp_str(Element str_elem_1, Element str_elem_2) {
-    return (bool)!strcmp(str_elem_1, str_elem_2);
+    return (bool) !strcmp(str_elem_1, str_elem_2);
 }
-
 
 static Element clone_str(Element str_elem) {
     if (!str_elem) return NULL;
-    char *p = malloc(strlen(str_elem)+1);//check
+    char *p = malloc(strlen(str_elem) + 1);//check
     strcpy(p, str_elem);
     return p;
 }
+
+
+//function get input from file and fill Hist and list
+static void in(Hist hist, LinkedList list, char *path1) {
+    char *buf = NULL;
+    size_t bufsize = 0;
+    FILE *file = fopen(path1, "r");
+    if (file == NULL) {
+        exit(1);
+    }
+    int i = 0;
+    while (getline(&buf, &bufsize, file) != EOF) {
+        unsigned long size = strlen(buf);
+        char *line = buf;
+        line[size - 1] = '\0';
+        LLAdd(list, i, line);
+        HistInc(hist, line);
+        i++;
+    }
+    free(buf);
+    fclose(file);
+}
+
+//function get input from user and fill hist and list
+static void stdin_func(Hist hist, LinkedList list) {
+    char *buf = NULL;
+    size_t bufsize = 0;
+    int i = 0;
+    printf("Enter text, please. Write <end> to stop entering:\n");
+    while (1) {
+        getline(&buf, &bufsize, stdin);
+        if (strcmp(buf, "end\n") == 0) break;
+        unsigned long size = strlen(buf);
+        char *line = buf;
+        line[size - 1] = '\0';
+        LLAdd(list, i, buf);
+        HistInc(hist, buf);
+        i++;
+    }
+    free(buf);
+}
+
+//function print out to file
+static void out(Hist hist, LinkedList list, char *path_out) {
+    FILE *file = fopen(path_out, "w");
+    if (file == NULL) exit(-1);
+    while (LLSize(list) != 0) {
+        char *line = (char *) LLRemove(list, 0);
+        fprintf(file, "%3d %s\n", HistGetCount(hist, line), line);
+    }
+    fclose(file);
+}
+
+//function print out to console
+static void stdout_func(Hist hist, LinkedList list) //to the console
+{
+    while (LLSize(list) != 0) {
+        char *line = (char *) LLRemove(list, 0);
+        printf("%3d %s\n", HistGetCount(hist, line), line);
+    }
+}
+
 int main(int argc, char **argv) {
 //    Hist hist = HistCreate(clone_str, free, cmp_str);
 //    char word[] = "b1";
@@ -43,78 +104,50 @@ int main(int argc, char **argv) {
 //    printf("count of b1>%d\n",HistGetCount(hist,p));
 //    printf("count of b2>%d\n",HistGetCount(hist,p1));
 //    printf("count of b3>%d\n",HistGetCount(hist,p2));
-    if(argc > 3){
-        fprintf(stderr, "\nUsage: %s <file-path>\n", argv[0]);
-        return 1;
-    }
-    Hist hist = HistCreate(clone_str, free, cmp_str);
-    char out[] = "out.txt";
-    char *path2 = NULL;
-    char *path1 = NULL;
-    int flag_argc = 0;
-    int flagIsOut = 1; //1=true   0=false
-    char *file1name = "";
-    char *file2name = "";
 
+    if (argc > 3) {
+        fprintf(stderr, "\nUsage: %s <file-path>\n", argv[0]);
+        return -1;
+    }
+
+    Hist hist = HistCreate(clone_str, free, cmp_str);
+    LinkedList list = LLCreate(clone_str, free);
+
+    if (argc == 1) {
+        stdin_func(hist, list);
+        stdout_func(hist, list);
+    }
     if (argc == 2) {
-        char *path1 = argv[1];
-        int flag_argc = 2;
+
+        if (*argv[1] == '-') {
+            stdin_func(hist, list);
+            stdout_func(hist, list);
+        } else {
+            in(hist, list, argv[1]);
+            stdout_func(hist, list);
+        }
+
     }
     if (argc == 3) {
-        path1 = argv[1];
-        path2 = argv[2];
-        int size = strlen(path1);
-        for (int i = size - 2; i > size - 9; i = i - 1) //example:  yesterday_out.txt   <<size-2 is index of the last "t"  size-8 is the index of the letter "o"
-        {
-            if (out[i] != path1[i]) {
-                flagIsOut = 0;
-            }
+        char *path_in = argv[1];
+        char *path_out = argv[2];
+        if (*path_in == '-' && *path_out == '-') {
+            stdin_func(hist, list);
+            stdout_func(hist, list);
         }
-        int i = size - 2;
-        while (path1[i] != '/') {
-            strcat(file1name, path1[i]);
-            i = i - 1;
+        if (*path_in == '-' && *path_out != '-') {
+            stdin_func(hist, list);
+            out(hist, list, path_out);
         }
-        int j = strlen(path2) - 2;
-        while (path2[i] != '/') {
-            strcat(file2name, path2[i]);
-            j = j - 1;
+        if (*path_in != '-' && *path_out == '-') {
+            in(hist, list, path_in);
+            stdout_func(hist, list);
         }
-        if (flagIsOut == 0) {
-            //path2 is the out.txt file  output
+        if (*path_in != '-' && *path_out != '-') {
+            in(hist, list, path_in);
+            out(hist, list, path_out);
         }
-        if (flagIsOut == 1) {
-            //path1 is the out.txt file  output
-        }
-
     }
-    if (flag_argc == 2) {
-        char *filename = "";
-        path1 = argv[1];
-        int size = strlen(argv[1]);
-        for (int i = size - 2; i > size - 9; i = i -
-                                                 1) //example:  yesterday_out.txt   <<size-2 is index of the last "t"  size-8 is the index of the letter "o"
-        {
-            if (out[i] != path1[i]) {
-                flagIsOut = 0;
-            }
-        }
-        int i = size - 2;
-        while (path1[i] != '/') {
-            strcat(filename, path1[i]);
-            i = i - 1;
-        }
-
-
-        if (flagIsOut == 0) {
-            //path1 is the input file
-        }
-        if (flagIsOut == 1) {
-            //path1 is the out.txt file  output
-        }
-
-    }
-
 
     return 0;
 }
