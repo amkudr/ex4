@@ -8,7 +8,7 @@
 
 
 static bool cmp_str(Element str_elem_1, Element str_elem_2) {
-    return (bool) !strcmp(str_elem_1, str_elem_2);
+    return (bool)!strcmp(str_elem_1, str_elem_2);
 }
 
 static Element clone_str(Element str_elem) {
@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
 //    printf("count of b1>%d\n",HistGetCount(hist,p));
 //    printf("count of b2>%d\n",HistGetCount(hist,p1));
 //    printf("count of b3>%d\n",HistGetCount(hist,p2));
-    test_hist();
+//    test_hist();
     if (argc > 3) {
         fprintf(stderr, "\nUsage: %s <file-path>\n", argv[0]);
         return -1;

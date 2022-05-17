@@ -107,6 +107,7 @@ void HistInc(Hist hist, Element e) {
             if (hist->cmp_func(HistGetElement(hist, i), e)) {
 
                 int count = HistGetCount(hist, e) + 1;
+                LLRemove(hist->listCount, i);
                 LLAdd(hist->listCount, i, &count);
             }
         }
