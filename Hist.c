@@ -11,16 +11,6 @@ static Element clone_int(Element int_elem) {
     *p = *((int*)int_elem);
     return p;
 }
-//static bool cmp_str(Element str_elem_1, Element str_elem_2) {
-//    return !strcmp(str_elem_1, str_elem_2);
-//}
-
-//static Element clone_str(Element str_elem) {
-//    if (!str_elem) return NULL;
-//    char *p = malloc(strlen(str_elem)+1);//check
-//    strcpy(p, str_elem);
-//    return p;
-//}
 
 
 struct Hist{
